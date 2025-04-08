@@ -1,3 +1,5 @@
 /buoyantCavity/[0-9]*
+/buoyantCavity/validation
+/buoyantCavity/postProcessing
 *log*
 /venv
