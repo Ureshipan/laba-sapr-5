@@ -1,2 +1,3 @@
 /buoyantCavity/[0-9]*
+*log*
 /venv
