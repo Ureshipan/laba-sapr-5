@@ -64,6 +64,8 @@ while True:
             break
         elif command == "clean":
             clean()
+        elif command == "write":
+            write_files()
         print("PEP")
     except:
         print(format_exc())
