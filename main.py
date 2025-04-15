@@ -69,6 +69,8 @@ while True:
             clean()
         elif command == "write":
             write_files()
+        elif command == "run":
+            run_solution()
         print("PEP")
     except:
         print(format_exc())
