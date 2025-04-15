@@ -56,6 +56,9 @@ def write_files():
         print(f"Ошибка: {e}")
         return False
     
+def run_solution():
+    subprocess.Popen('cd buoyantCavity/; blockMesh; foamRun > log; paraFoam;'.split())
+    
 # Main loop
 while True:
     try:
