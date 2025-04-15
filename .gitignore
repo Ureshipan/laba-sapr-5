@@ -1,4 +1,4 @@
-/buoyantCavity/[0-9]*
+/buoyantCavity/[1-9]*
 /buoyantCavity/validation
 /buoyantCavity/postProcessing
 *log*

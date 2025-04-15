@@ -11,12 +11,12 @@ def clean():
     subprocess.Popen("buoyantCavity/Clean.sh".split())
     
 def write_files():
-    base_dir = os.Path("buoyantCavity/")
+    base_dir = "buoyantCavity"
     
     try:
         # 1. Изменяем файл 0/T
         t_file = base_dir + "/0/T"
-        if t_file.exists():
+        if os.path.exists(t_file):
             with open(t_file, 'r') as f:
                 lines = f.readlines()
             
@@ -36,7 +36,7 @@ def write_files():
 
         # 2. Изменяем system/blockMeshDict
         block_mesh_file = base_dir + "/system/blockMeshDict"
-        if block_mesh_file.exists():
+        if os.path.exists(block_mesh_file):
             with open(block_mesh_file, 'r') as f:
                 lines = f.readlines()
             
