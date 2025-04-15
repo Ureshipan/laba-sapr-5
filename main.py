@@ -35,13 +35,13 @@ def write_files():
             return False
 
         # 2. Изменяем system/blockMeshDict
-        block_mesh_file = base_dir / "system" / "blockMeshDict"
+        block_mesh_file = base_dir + "/system/blockMeshDict"
         if block_mesh_file.exists():
             with open(block_mesh_file, 'r') as f:
                 lines = f.readlines()
             
-            if len(lines) > 16:  # Строка 17 в bash - это индекс 16 в Python
-                lines[16] = f"b {square};\n"
+            if len(lines) > 16:  
+                lines[16] = f"b {params['square']};\n"
             
             with open(block_mesh_file, 'w') as f:
                 f.writelines(lines)
