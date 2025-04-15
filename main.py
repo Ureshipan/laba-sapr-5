@@ -2,9 +2,9 @@ import sys, os, subprocess
 from traceback import format_exc
 
 params = {
-    "hot": 0,
-    "cold": 0,
-    "square": 0
+    "hot": 305,
+    "cold": 295,
+    "square": 100
 }
 
 def clean():
@@ -15,7 +15,7 @@ def write_files():
     
     try:
         # 1. Изменяем файл 0/T
-        t_file = base_dir / "0" / "T"
+        t_file = base_dir + "/0/T"
         if t_file.exists():
             with open(t_file, 'r') as f:
                 lines = f.readlines()

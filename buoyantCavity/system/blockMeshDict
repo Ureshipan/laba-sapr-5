@@ -16,6 +16,7 @@ FoamFile
 convertToMeters 0.001;
 b 100;
 
+
 vertices
 (
     ( 0 0 0)
