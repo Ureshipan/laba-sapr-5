@@ -26,7 +26,7 @@ def write_files():
             if len(lines) > 19:
                 lines[19] = f"cold {params['cold']};\n"
             if len(lines) > 21:
-                lines[21] = f"internalField uniform {round((params['hot'] - params['cold']) / 2)};\n"
+                lines[21] = f"internalField uniform {round((params['hot'] + params['cold']) / 2)};\n"
             
             with open(t_file, 'w') as f:
                 f.writelines(lines)
