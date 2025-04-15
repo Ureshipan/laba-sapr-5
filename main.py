@@ -57,8 +57,8 @@ def write_files():
         return False
     
 def run_solution():
+    work_dir = os.curdir + "/buoyantCavity"
     commands = [
-        "cd buoyantCavity/",
         "blockMesh",
         "foamRun > log",
         "paraFoam"
@@ -67,6 +67,7 @@ def run_solution():
     for cmd in commands:
         process = subprocess.Popen(
             cmd,
+            cwd=work_dir,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
