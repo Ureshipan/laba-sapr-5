@@ -57,7 +57,25 @@ def write_files():
         return False
     
 def run_solution():
-    subprocess.Popen('cd buoyantCavity/; blockMesh; foamRun > log; paraFoam;'.split())
+    commands = [
+        "cd buoyantCavity/",
+        "blockMesh",
+        "foamRun > log",
+        "paraFoam"
+    ]
+    
+    # Объединяем команды в одну строку с разделителями &&
+    command_str = " && ".join(commands)
+    
+    # Выполняем команды в оболочке
+    process = subprocess.Popen(
+        command_str,
+        shell=True,
+        executable="/bin/bash",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
     
 # Main loop
 while True:
