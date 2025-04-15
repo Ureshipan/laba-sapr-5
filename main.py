@@ -64,18 +64,24 @@ def run_solution():
         "paraFoam"
     ]
     
-    # Объединяем команды в одну строку с разделителями &&
-    command_str = " && ".join(commands)
-    
-    # Выполняем команды в оболочке
-    process = subprocess.Popen(
-        command_str,
-        shell=True,
-        executable="/bin/bash",
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
+    for cmd in commands:
+        process = subprocess.Popen(
+            cmd,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        
+        stdout, stderr = process.communicate()
+        
+        print(f"Command: {cmd}")
+        print("STDOUT:", stdout)
+        print("STDERR:", stderr)
+        
+        if process.returncode != 0:
+            print(f"Error in command '{cmd}': Exit code {process.returncode}")
+            break
     
 # Main loop
 while True:
