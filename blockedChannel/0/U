@@ -2,47 +2,49 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
-    \\  /    A nd           | Version:  11
+    \\  /    A nd           | Version:  12
      \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     format      ascii;
-    class       volScalarField;
+    class       volVectorField;
     location    "0";
-    object      T;
+    object      U;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+dimensions      [0 1 -1 0 0 0 0];
 
-hot 305;
-cold 295;
-
-internalField   uniform 300;
+internalField   uniform (10 0 0);
 
 boundaryField
 {
+    inlet
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    walls
+    {
+        type            noSlip;
+    }
     frontAndBack
     {
-        type            zeroGradient;
+        type            empty;
     }
+}
 
-    topAndBottom
+sources
+{
+    volumeSource
     {
-        type            zeroGradient;
-    }
-
-    hot
-    {
-        type            fixedValue;
-        value           uniform 305; // 34.6 degC
-    }
-
-    cold
-    {
-        type            fixedValue;
-        value           uniform 295; // 15 degC
+        type            uniformFixedValue;
+        uniformValue    (0 0 0);
     }
 }
 

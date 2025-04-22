@@ -1,5 +1,8 @@
-/buoyantCavity/[1-9]*
-/buoyantCavity/validation
-/buoyantCavity/postProcessing
+buoyantCavity/[1-9]*
+buoyantCavity/validation
+buoyantCavity/postProcessing
+blockedChannel/[1-9]*
+blockedChannel/validation
+blockedChannel/postProcessing
 *log*
 /venv
