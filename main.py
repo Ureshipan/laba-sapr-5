@@ -16,17 +16,14 @@ def write_files():
     try:
         # 1. Изменяем файл 0/T
         t_file = base_dir + "/0/T"
-        if os.path.exists(t_file):
-            with open(t_file, 'r') as f:
+        if os.path.exists("base_files/" + t_file):
+            with open("base_files/" + t_file, 'r') as f:
                 lines = f.readlines()
             
-            # Меняем строки (нумерация с 0, поэтому 18, 19, 21 вместо 19, 20, 22)
-            if len(lines) > 18:
-                lines[18] = f"hot {params['hot']};\n"
-            if len(lines) > 19:
-                lines[19] = f"cold {params['cold']};\n"
-            if len(lines) > 21:
-                lines[21] = f"internalField uniform {round((params['hot'] + params['cold']) / 2)};\n"
+            for i in range(len(lines)):
+                lines[i] = lines[i].replace('{{hot}}', str(params['hot']))
+                lines[i] = lines[i].replace('{{cold}}', str(params['cold']))
+                lines[i] = lines[i].replace('{{uniform}}', str(round((params['hot'] + params['cold']) / 2)))
             
             with open(t_file, 'w') as f:
                 f.writelines(lines)
