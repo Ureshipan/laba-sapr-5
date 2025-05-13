@@ -1,13 +1,13 @@
 import sys, os, subprocess
 from traceback import format_exc
-from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QSpinBox
-from PySide2.QtCore import Qt
+import tkinter as tk
+from tkinter import ttk, messagebox
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Temperature Mixing Calculator")
-        self.setMinimumSize(400, 300)
+class MainWindow:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Temperature Mixing Calculator")
+        self.root.geometry("400x300")
         
         # Initialize parameters
         self.params = {
@@ -16,101 +16,85 @@ class MainWindow(QMainWindow):
             "square": 100
         }
         
-        # Create central widget and layout
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
+        # Create main frame
+        main_frame = ttk.Frame(root, padding="10")
+        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
-        # Create parameter input fields
-        self.create_parameter_inputs(layout)
+        # Create parameter inputs
+        self.create_parameter_inputs(main_frame)
         
         # Create control buttons
-        self.create_control_buttons(layout)
+        self.create_control_buttons(main_frame)
         
         # Status label
-        self.status_label = QLabel("Ready")
-        layout.addWidget(self.status_label)
+        self.status_var = tk.StringVar(value="Ready")
+        self.status_label = ttk.Label(main_frame, textvariable=self.status_var)
+        self.status_label.grid(row=4, column=0, columnspan=2, pady=10)
         
-    def create_parameter_inputs(self, layout):
+    def create_parameter_inputs(self, parent):
         # Hot temperature input
-        hot_layout = QHBoxLayout()
-        hot_label = QLabel("Hot Temperature (K):")
-        self.hot_input = QSpinBox()
-        self.hot_input.setRange(273, 500)
-        self.hot_input.setValue(self.params["hot"])
-        hot_layout.addWidget(hot_label)
-        hot_layout.addWidget(self.hot_input)
-        layout.addLayout(hot_layout)
+        ttk.Label(parent, text="Hot Temperature (K):").grid(row=0, column=0, sticky=tk.W, pady=5)
+        self.hot_var = tk.IntVar(value=self.params["hot"])
+        self.hot_input = ttk.Spinbox(parent, from_=273, to=500, textvariable=self.hot_var)
+        self.hot_input.grid(row=0, column=1, sticky=tk.W, pady=5)
         
         # Cold temperature input
-        cold_layout = QHBoxLayout()
-        cold_label = QLabel("Cold Temperature (K):")
-        self.cold_input = QSpinBox()
-        self.cold_input.setRange(273, 500)
-        self.cold_input.setValue(self.params["cold"])
-        cold_layout.addWidget(cold_label)
-        cold_layout.addWidget(self.cold_input)
-        layout.addLayout(cold_layout)
+        ttk.Label(parent, text="Cold Temperature (K):").grid(row=1, column=0, sticky=tk.W, pady=5)
+        self.cold_var = tk.IntVar(value=self.params["cold"])
+        self.cold_input = ttk.Spinbox(parent, from_=273, to=500, textvariable=self.cold_var)
+        self.cold_input.grid(row=1, column=1, sticky=tk.W, pady=5)
         
         # Square size input
-        square_layout = QHBoxLayout()
-        square_label = QLabel("Square Size (mm):")
-        self.square_input = QSpinBox()
-        self.square_input.setRange(10, 1000)
-        self.square_input.setValue(self.params["square"])
-        square_layout.addWidget(square_label)
-        square_layout.addWidget(self.square_input)
-        layout.addLayout(square_layout)
+        ttk.Label(parent, text="Square Size (mm):").grid(row=2, column=0, sticky=tk.W, pady=5)
+        self.square_var = tk.IntVar(value=self.params["square"])
+        self.square_input = ttk.Spinbox(parent, from_=10, to=1000, textvariable=self.square_var)
+        self.square_input.grid(row=2, column=1, sticky=tk.W, pady=5)
         
-    def create_control_buttons(self, layout):
-        # Buttons layout
-        buttons_layout = QHBoxLayout()
+    def create_control_buttons(self, parent):
+        # Buttons frame
+        buttons_frame = ttk.Frame(parent)
+        buttons_frame.grid(row=3, column=0, columnspan=2, pady=10)
         
         # Clean button
-        clean_btn = QPushButton("Clean")
-        clean_btn.clicked.connect(self.clean)
-        buttons_layout.addWidget(clean_btn)
+        clean_btn = ttk.Button(buttons_frame, text="Clean", command=self.clean)
+        clean_btn.pack(side=tk.LEFT, padx=5)
         
         # Write button
-        write_btn = QPushButton("Write Files")
-        write_btn.clicked.connect(self.write_files)
-        buttons_layout.addWidget(write_btn)
+        write_btn = ttk.Button(buttons_frame, text="Write Files", command=self.write_files)
+        write_btn.pack(side=tk.LEFT, padx=5)
         
         # Run button
-        run_btn = QPushButton("Run Solution")
-        run_btn.clicked.connect(self.run_solution)
-        buttons_layout.addWidget(run_btn)
-        
-        layout.addLayout(buttons_layout)
+        run_btn = ttk.Button(buttons_frame, text="Run Solution", command=self.run_solution)
+        run_btn.pack(side=tk.LEFT, padx=5)
     
     def update_params(self):
-        self.params["hot"] = self.hot_input.value()
-        self.params["cold"] = self.cold_input.value()
-        self.params["square"] = self.square_input.value()
+        self.params["hot"] = self.hot_var.get()
+        self.params["cold"] = self.cold_var.get()
+        self.params["square"] = self.square_var.get()
     
     def clean(self):
         try:
             subprocess.Popen("buoyantCavity/Clean.sh".split())
-            self.status_label.setText("Cleaned successfully")
+            self.status_var.set("Cleaned successfully")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to clean: {str(e)}")
+            messagebox.showerror("Error", f"Failed to clean: {str(e)}")
     
     def write_files(self):
         try:
             self.update_params()
             if write_files(self.params):
-                self.status_label.setText("Files written successfully")
+                self.status_var.set("Files written successfully")
             else:
-                QMessageBox.warning(self, "Warning", "Failed to write files")
+                messagebox.showwarning("Warning", "Failed to write files")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to write files: {str(e)}")
+            messagebox.showerror("Error", f"Failed to write files: {str(e)}")
     
     def run_solution(self):
         try:
             run_solution()
-            self.status_label.setText("Solution completed")
+            self.status_var.set("Solution completed")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Failed to run solution: {str(e)}")
+            messagebox.showerror("Error", f"Failed to run solution: {str(e)}")
 
 def write_files(params):
     base_dir = "buoyantCavity"
@@ -183,7 +167,6 @@ def run_solution():
             break
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
+    root = tk.Tk()
+    app = MainWindow(root)
+    root.mainloop()
