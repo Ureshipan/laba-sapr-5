@@ -209,12 +209,22 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-scalarTransport
+probes
 {
-    type            scalarTransport;
-    libs            ("utilityFunctionObjects");
-    field           tracer;
-    diffusivity     constant 1e-6;
+    type            probes;
+    libs            ("sampling");
+    
+    writeControl   timeStep;
+    writeInterval  1;
+    
+    fields         (U p);
+    
+    probeLocations
+    (
+        (0.1 0.1 0.1)
+        (0.5 0.5 0.1)
+        (0.9 0.9 0.1)
+    );
 }
 
 // ************************************************************************* //
