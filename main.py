@@ -7,7 +7,7 @@ class MainWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("Temperature Mixing Calculator")
-        self.root.geometry("400x400")  # Увеличиваем высоту окна
+        self.root.geometry("400x450")  # Увеличиваем высоту окна
         
         # Initialize parameters
         self.params = {
@@ -15,7 +15,8 @@ class MainWindow:
             "cold": 295,
             "square": 100,
             "end_time": 500,
-            "write_interval": 50
+            "write_interval": 50,
+            "purge_write": 100  # Добавляем параметр для хранения количества кадров
         }
         
         # Create main frame
@@ -31,7 +32,7 @@ class MainWindow:
         # Status label
         self.status_var = tk.StringVar(value="Ready")
         self.status_label = ttk.Label(main_frame, textvariable=self.status_var)
-        self.status_label.grid(row=6, column=0, columnspan=2, pady=10)
+        self.status_label.grid(row=7, column=0, columnspan=2, pady=10)
         
     def create_parameter_inputs(self, parent):
         # Hot temperature input
@@ -63,11 +64,17 @@ class MainWindow:
         self.write_interval_var = tk.IntVar(value=self.params["write_interval"])
         self.write_interval_input = ttk.Spinbox(parent, from_=1, to=100, textvariable=self.write_interval_var)
         self.write_interval_input.grid(row=4, column=1, sticky=tk.W, pady=5)
+
+        # Purge write input
+        ttk.Label(parent, text="Max Frames to Keep:").grid(row=5, column=0, sticky=tk.W, pady=5)
+        self.purge_write_var = tk.IntVar(value=self.params["purge_write"])
+        self.purge_write_input = ttk.Spinbox(parent, from_=1, to=1000, textvariable=self.purge_write_var)
+        self.purge_write_input.grid(row=5, column=1, sticky=tk.W, pady=5)
         
     def create_control_buttons(self, parent):
         # Buttons frame
         buttons_frame = ttk.Frame(parent)
-        buttons_frame.grid(row=5, column=0, columnspan=2, pady=10)
+        buttons_frame.grid(row=6, column=0, columnspan=2, pady=10)
         
         # Clean button
         clean_btn = ttk.Button(buttons_frame, text="Clean", command=self.clean)
@@ -87,6 +94,7 @@ class MainWindow:
         self.params["square"] = self.square_var.get()
         self.params["end_time"] = self.end_time_var.get()
         self.params["write_interval"] = self.write_interval_var.get()
+        self.params["purge_write"] = self.purge_write_var.get()
     
     def clean(self):
         try:
@@ -159,6 +167,8 @@ def write_files(params):
                     lines[i] = f"endTime         {params['end_time']};\n"
                 elif "writeInterval" in lines[i]:
                     lines[i] = f"writeInterval   {params['write_interval']};\n"
+                elif "purgeWrite" in lines[i]:
+                    lines[i] = f"purgeWrite      {params['purge_write']};\n"
             
             with open(control_dict_file, 'w') as f:
                 f.writelines(lines)
