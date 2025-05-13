@@ -139,7 +139,59 @@ def write_files(params):
             print(f"Файл {u_file} не найден!")
             return False
 
-        # 2. Изменяем system/controlDict
+        # 2. Создаем файл constant/alpha.volume
+        alpha_file = base_dir + "/constant/alpha.volume"
+        alpha_content = """/*--------------------------------*- C++ -*----------------------------------*\\
+  =========                 |
+  \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\\\    /   O peration     | Website:  https://openfoam.org
+    \\\\  /    A nd           | Version:  12
+     \\\\/     M anipulation  |
+\\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "constant";
+    object      alpha.volume;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 1;
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    walls
+    {
+        type            zeroGradient;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //
+"""
+        # Создаем директорию constant, если её нет
+        os.makedirs(os.path.dirname(alpha_file), exist_ok=True)
+        
+        # Записываем файл
+        with open(alpha_file, 'w') as f:
+            f.write(alpha_content)
+
+        # 3. Изменяем system/controlDict
         control_dict_file = base_dir + "/system/controlDict"
         if os.path.exists(control_dict_file):
             with open(control_dict_file, 'r') as f:
