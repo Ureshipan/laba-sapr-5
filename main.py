@@ -7,13 +7,15 @@ class MainWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("Temperature Mixing Calculator")
-        self.root.geometry("400x300")
+        self.root.geometry("400x400")  # Увеличиваем высоту окна
         
         # Initialize parameters
         self.params = {
             "hot": 305,
             "cold": 295,
-            "square": 100
+            "square": 100,
+            "end_time": 500,
+            "write_interval": 50
         }
         
         # Create main frame
@@ -29,7 +31,7 @@ class MainWindow:
         # Status label
         self.status_var = tk.StringVar(value="Ready")
         self.status_label = ttk.Label(main_frame, textvariable=self.status_var)
-        self.status_label.grid(row=4, column=0, columnspan=2, pady=10)
+        self.status_label.grid(row=6, column=0, columnspan=2, pady=10)
         
     def create_parameter_inputs(self, parent):
         # Hot temperature input
@@ -49,11 +51,23 @@ class MainWindow:
         self.square_var = tk.IntVar(value=self.params["square"])
         self.square_input = ttk.Spinbox(parent, from_=10, to=1000, textvariable=self.square_var)
         self.square_input.grid(row=2, column=1, sticky=tk.W, pady=5)
+
+        # End time input
+        ttk.Label(parent, text="End Time (s):").grid(row=3, column=0, sticky=tk.W, pady=5)
+        self.end_time_var = tk.IntVar(value=self.params["end_time"])
+        self.end_time_input = ttk.Spinbox(parent, from_=100, to=1000, textvariable=self.end_time_var)
+        self.end_time_input.grid(row=3, column=1, sticky=tk.W, pady=5)
+
+        # Write interval input
+        ttk.Label(parent, text="Write Interval (s):").grid(row=4, column=0, sticky=tk.W, pady=5)
+        self.write_interval_var = tk.IntVar(value=self.params["write_interval"])
+        self.write_interval_input = ttk.Spinbox(parent, from_=1, to=100, textvariable=self.write_interval_var)
+        self.write_interval_input.grid(row=4, column=1, sticky=tk.W, pady=5)
         
     def create_control_buttons(self, parent):
         # Buttons frame
         buttons_frame = ttk.Frame(parent)
-        buttons_frame.grid(row=3, column=0, columnspan=2, pady=10)
+        buttons_frame.grid(row=5, column=0, columnspan=2, pady=10)
         
         # Clean button
         clean_btn = ttk.Button(buttons_frame, text="Clean", command=self.clean)
@@ -71,6 +85,8 @@ class MainWindow:
         self.params["hot"] = self.hot_var.get()
         self.params["cold"] = self.cold_var.get()
         self.params["square"] = self.square_var.get()
+        self.params["end_time"] = self.end_time_var.get()
+        self.params["write_interval"] = self.write_interval_var.get()
     
     def clean(self):
         try:
@@ -130,6 +146,24 @@ def write_files(params):
                 f.writelines(lines)
         else:
             print(f"Файл {block_mesh_file} не найден!")
+            return False
+
+        # 3. Изменяем system/controlDict
+        control_dict_file = base_dir + "/system/controlDict"
+        if os.path.exists(control_dict_file):
+            with open(control_dict_file, 'r') as f:
+                lines = f.readlines()
+            
+            for i in range(len(lines)):
+                if "endTime" in lines[i]:
+                    lines[i] = f"endTime         {params['end_time']};\n"
+                elif "writeInterval" in lines[i]:
+                    lines[i] = f"writeInterval   {params['write_interval']};\n"
+            
+            with open(control_dict_file, 'w') as f:
+                f.writelines(lines)
+        else:
+            print(f"Файл {control_dict_file} не найден!")
             return False
 
         return True
