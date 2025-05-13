@@ -1,2 +1,2 @@
-PySide2==5.15.2.1
+PySide2
 numpy==1.26.3 
