@@ -121,8 +121,14 @@ def write_files(params):
             for i in range(len(lines)):
                 if "internalField" in lines[i]:
                     lines[i] = f"internalField   uniform ({params['inlet_velocity']} 0 0);\n"
-                elif "value" in lines[i] and "$internalField" in lines[i]:
-                    lines[i] = f"        value           $internalField;\n"
+                elif "inlet" in lines[i] and "{" in lines[i+1]:
+                    # Находим секцию inlet и устанавливаем значение
+                    inlet_velocity = f"        value           uniform ({params['inlet_velocity']} 0 0);\n"
+                    # Ищем строку после type fixedValue
+                    for j in range(i, len(lines)):
+                        if "type" in lines[j] and "fixedValue" in lines[j]:
+                            lines[j+1] = inlet_velocity
+                            break
             
             with open(u_file, 'w') as f:
                 f.writelines(lines)
