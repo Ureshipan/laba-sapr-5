@@ -191,7 +191,56 @@ boundaryField
         with open(alpha_file, 'w') as f:
             f.write(alpha_content)
 
-        # 3. Создаем файл system/functions
+        # 3. Создаем файл 0/tracer
+        tracer_file = base_dir + "/0/tracer"
+        tracer_content = """/*--------------------------------*- C++ -*----------------------------------*\\
+  =========                 |
+  \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\\\    /   O peration     | Website:  https://openfoam.org
+    \\\\  /    A nd           | Version:  12
+     \\\\/     M anipulation  |
+\\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      tracer;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform 1;
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    walls
+    {
+        type            zeroGradient;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //
+"""
+        # Записываем файл tracer
+        with open(tracer_file, 'w') as f:
+            f.write(tracer_content)
+
+        # 4. Создаем файл system/functions
         functions_file = base_dir + "/system/functions"
         functions_content = """/*--------------------------------*- C++ -*----------------------------------*\\
   =========                 |
@@ -217,7 +266,7 @@ probes
     writeControl   timeStep;
     writeInterval  1;
     
-    fields         (U p);
+    fields         (U p tracer);
     
     probeLocations
     (
@@ -233,7 +282,7 @@ probes
         with open(functions_file, 'w') as f:
             f.write(functions_content)
 
-        # 4. Изменяем system/controlDict
+        # 5. Изменяем system/controlDict
         control_dict_file = base_dir + "/system/controlDict"
         if os.path.exists(control_dict_file):
             with open(control_dict_file, 'r') as f:
