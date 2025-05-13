@@ -191,7 +191,39 @@ boundaryField
         with open(alpha_file, 'w') as f:
             f.write(alpha_content)
 
-        # 3. Изменяем system/controlDict
+        # 3. Создаем файл system/functions
+        functions_file = base_dir + "/system/functions"
+        functions_content = """/*--------------------------------*- C++ -*----------------------------------*\\
+  =========                 |
+  \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\\\    /   O peration     | Website:  https://openfoam.org
+    \\\\  /    A nd           | Version:  12
+     \\\\/     M anipulation  |
+\\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      functions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+scalarTransport
+{
+    type            scalarTransport;
+    libs            (utilityFunctionObjects);
+    field           tracer;
+    diffusivity     constant 1e-6;
+}
+
+// ************************************************************************* //
+"""
+        # Записываем файл functions
+        with open(functions_file, 'w') as f:
+            f.write(functions_content)
+
+        # 4. Изменяем system/controlDict
         control_dict_file = base_dir + "/system/controlDict"
         if os.path.exists(control_dict_file):
             with open(control_dict_file, 'r') as f:
