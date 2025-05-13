@@ -1,8 +1,6 @@
 import sys, os, subprocess
 from traceback import format_exc
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
-                            QHBoxLayout, QLabel, QLineEdit, QPushButton, 
-                            QMessageBox, QSpinBox)
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QSpinBox
 from PyQt6.QtCore import Qt
 
 class MainWindow(QMainWindow):

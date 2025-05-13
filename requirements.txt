@@ -1,2 +1,2 @@
-PyQt6==6.6.1
+python PyQt6==6.6.1
 numpy==1.26.3 
