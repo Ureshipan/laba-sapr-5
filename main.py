@@ -1,7 +1,7 @@
 import sys, os, subprocess
 from traceback import format_exc
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QSpinBox
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QSpinBox
+from PySide2.QtCore import Qt
 
 class MainWindow(QMainWindow):
     def __init__(self):
