@@ -212,7 +212,7 @@ FoamFile
 scalarTransport
 {
     type            scalarTransport;
-    libs            (utilityFunctionObjects);
+    libs            ("utilityFunctionObjects");
     field           tracer;
     diffusivity     constant 1e-6;
 }
